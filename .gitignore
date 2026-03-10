@@ -1,55 +1,61 @@
-# ========================
-# Dependencies
-# ========================
+# Node dependencies
 node_modules/
-.venv/
+npm-debug.log
+yarn-error.log
+
+# Build output
+dist/
+build/
+.next/
+
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.pytest_cache/
-
-# ========================
-# Build Output
-# ========================
-dist/
-build/
-
-# ========================
-# Environment & Secrets (NEVER push these)
-# ========================
-.env
-.env.local
-.env.*.local
-
-# ========================
-# Logs
-# ========================
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
 *.log
-ml_service.log
-firebase-debug.log
 
-# ========================
-# OS & Editor Files
-# ========================
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+ui-debug.log
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+
+# IDEs and Editors
 .vscode/
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# ========================
-# Large Data Files
-# ========================
-database.sqlite
-all_json/
-*.sqlite
-
-# ========================
-# ML Models (large binary files)
-# ========================
-ml-service/models/*.joblib
-
-# ========================
-# Firebase
-# ========================
-.firebase/
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
