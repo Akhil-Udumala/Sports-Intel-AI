@@ -1,0 +1,20 @@
+{
+    "features": [
+        "goals",
+        "assists",
+        "minutesPlayed",
+        "crossingAccuracy",
+        "shootingAccuracy",
+        "yellowCards",
+        "fatigueScore",
+        "injuryRisk",
+        "workloadKM",
+        "topSpeed",
+        "sprintCount",
+        "paceMetric",
+        "passingAccuracy"
+    ],
+    "target_classification": "tactical_performance_level",
+    "target_regression_performance": "match_impact_probability",
+    "target_regression_injury": "ml_injury_prediction"
+}

@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper functions ─────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // ── users/ ───────────────────────────────────────────────────
+    // Users can read/write their own doc; admins can read all
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId);
+    }
+
+    // ── coaches/ ─────────────────────────────────────────────────
+    // Any signed-in user can read (needed for team slot check on client)
+    // Write restricted to admin and Cloud Functions (via server SDK)
+    match /coaches/{coachId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // ── coach_requests/ ──────────────────────────────────────────
+    // Users can create their own requests; admins can read/update all
+    match /coach_requests/{requestId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // ── admin_notifications/ ─────────────────────────────────────
+    // Only admins can read or write
+    match /admin_notifications/{notifId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ── notifications/ ───────────────────────────────────────────
+    // Admins can write; users can only read their own
+    match /notifications/{notifId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow write: if isAdmin();
+    }
+
+    // ── coach_activity/ ──────────────────────────────────────────
+    // Coaches can create their own entries; admins can read all
+    match /coach_activity/{activityId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn() && request.resource.data.coachId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+  }
+}

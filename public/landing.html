@@ -1,0 +1,2343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Intel AI — AI-Powered Sports Intelligence for Coaches</title>
+    <meta name="description"
+        content="Sports Intel AI is a machine-learning-powered sports intelligence platform for cricket and football coaches — delivering deep analytics, injury forecasting, and AI-driven team selection across 272 real player records.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --bg: #060912;
+            --bg2: #0b1020;
+            --bg3: #101628;
+            --lime: #D4FF00;
+            --cyan: #00D4FF;
+            --orange: #FF5722;
+            --amber: #FFB800;
+            --violet: #7C5CFC;
+            --green: #00E676;
+            --surface: rgba(255, 255, 255, 0.04);
+            --edge: rgba(255, 255, 255, 0.07);
+            --edge2: rgba(255, 255, 255, 0.12);
+            --muted: #4A5568;
+            --muted2: #718096;
+            --muted3: #A0AEC0;
+            --text: #EDF2F7;
+            --fD: 'Barlow Condensed', sans-serif;
+            --fB: 'Barlow', sans-serif
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: var(--fB);
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased
+        }
+
+        #canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: .6
+        }
+
+        #nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            transition: background .4s, border-color .4s
+        }
+
+        #nav.solid {
+            background: rgba(6, 9, 18, .92);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--edge)
+        }
+
+        .nav-brand {
+            font-family: var(--fD);
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -.5px;
+            display: flex;
+            align-items: center;
+            gap: 2px
+        }
+
+        .brand-ath {
+            color: var(--text)
+        }
+
+        .brand-iq {
+            background: var(--lime);
+            color: var(--bg);
+            padding: 2px 8px;
+            margin-left: 2px;
+            clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+            font-size: 18px
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 36px;
+            list-style: none;
+            margin: 0 auto
+        }
+
+        .nav-links a {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted3);
+            text-decoration: none;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: color .2s
+        }
+
+        .nav-links a:hover {
+            color: var(--lime)
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 22px;
+            background: var(--lime);
+            color: var(--bg);
+            font-family: var(--fD);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+            transition: all .25s
+        }
+
+        .nav-btn:hover {
+            background: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(212, 255, 0, .4)
+        }
+
+        #hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            padding: 100px 5% 60px;
+            gap: 60px;
+            position: relative;
+            z-index: 1;
+            overflow: hidden
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 45%;
+            height: 100%;
+            background: linear-gradient(160deg, rgba(212, 255, 0, .025) 0%, transparent 60%);
+            pointer-events: none
+        }
+
+        #hero::after {
+            content: 'IQ';
+            position: absolute;
+            right: -2%;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--fD);
+            font-size: clamp(200px, 22vw, 380px);
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(212, 255, 0, .06);
+            pointer-events: none;
+            line-height: 1;
+            user-select: none
+        }
+
+        .hero-left {
+            position: relative
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(212, 255, 0, .25);
+            background: rgba(212, 255, 0, .06);
+            padding: 5px 14px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--lime);
+            margin-bottom: 22px
+        }
+
+        .hero-tag .blink {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--lime);
+            animation: blink 1.6s infinite
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .2
+            }
+        }
+
+        .hero-h1 {
+            font-family: var(--fD);
+            font-size: clamp(52px, 7vw, 96px);
+            font-weight: 900;
+            line-height: .92;
+            letter-spacing: -2px;
+            margin-bottom: 28px
+        }
+
+        .hero-h1 em {
+            font-style: italic;
+            color: var(--lime);
+            display: block
+        }
+
+        .hero-h1 .ghost {
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(255, 255, 255, .2);
+            display: block
+        }
+
+        .hero-p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--muted3);
+            font-weight: 300;
+            max-width: 460px;
+            margin-bottom: 38px
+        }
+
+        .hero-cta-row {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 36px;
+            background: var(--lime);
+            color: var(--bg);
+            font-family: var(--fD);
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+            transition: all .3s
+        }
+
+        .btn-primary:hover {
+            background: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 20px 48px rgba(212, 255, 0, .45)
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border: 1px solid var(--edge2);
+            color: var(--muted3);
+            font-family: var(--fD);
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+            transition: all .25s
+        }
+
+        .btn-outline:hover {
+            border-color: var(--cyan);
+            color: var(--cyan)
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 28px;
+            margin-top: 44px
+        }
+
+        .hstat {
+            display: flex;
+            flex-direction: column;
+            border-left: 2px solid var(--edge2);
+            padding-left: 14px
+        }
+
+        .hstat-n {
+            font-family: var(--fD);
+            font-size: 34px;
+            font-weight: 900;
+            color: var(--lime);
+            line-height: 1
+        }
+
+        .hstat-l {
+            font-size: 10px;
+            color: var(--muted2);
+            letter-spacing: 1px;
+            margin-top: 3px
+        }
+
+        .hero-right {
+            position: relative
+        }
+
+        .dash-mock {
+            background: var(--bg2);
+            border: 1px solid var(--edge);
+            border-radius: 4px;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, .6), 0 0 0 1px var(--edge)
+        }
+
+        .dash-mock::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--lime), var(--cyan), var(--violet))
+        }
+
+        .dm-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--edge);
+            background: rgba(0, 0, 0, .2)
+        }
+
+        .dm-tb-left {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .dm-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%
+        }
+
+        .dm-title {
+            font-family: var(--fD);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--muted3);
+            text-transform: uppercase
+        }
+
+        .live-pill {
+            background: rgba(0, 230, 118, .12);
+            color: var(--green);
+            border: 1px solid rgba(0, 230, 118, .25);
+            padding: 2px 10px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1.5px
+        }
+
+        .dm-body {
+            padding: 18px
+        }
+
+        .dm-player-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px
+        }
+
+        .dm-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(212, 255, 0, .15), rgba(0, 212, 255, .15));
+            border: 1px solid var(--edge2);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px
+        }
+
+        .dm-player-name {
+            font-family: var(--fD);
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -.5px
+        }
+
+        .dm-player-meta {
+            font-size: 11px;
+            color: var(--muted2);
+            margin-top: 1px
+        }
+
+        .dm-grade-tag {
+            margin-left: auto;
+            font-family: var(--fD);
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--lime)
+        }
+
+        .dm-score-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px
+        }
+
+        .dm-score {
+            background: rgba(0, 0, 0, .25);
+            border: 1px solid var(--edge);
+            padding: 12px;
+            text-align: center
+        }
+
+        .dm-score-n {
+            font-family: var(--fD);
+            font-size: 26px;
+            font-weight: 900;
+            line-height: 1
+        }
+
+        .dm-score-l {
+            font-size: 9px;
+            color: var(--muted2);
+            letter-spacing: 1px;
+            margin-top: 4px;
+            text-transform: uppercase
+        }
+
+        .dm-chart-area {
+            position: relative;
+            height: 72px;
+            margin-bottom: 14px
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%
+        }
+
+        .dm-mini-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px
+        }
+
+        .dm-mini {
+            background: rgba(0, 0, 0, .2);
+            border: 1px solid var(--edge);
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .dm-mini-l {
+            font-size: 10px;
+            color: var(--muted2);
+            text-transform: uppercase;
+            letter-spacing: .8px
+        }
+
+        .dm-mini-v {
+            font-family: var(--fD);
+            font-size: 15px;
+            font-weight: 700
+        }
+
+        .float-card {
+            position: absolute;
+            background: var(--bg2);
+            border: 1px solid var(--edge2);
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+            white-space: nowrap;
+            animation: float 3.5s ease-in-out infinite
+        }
+
+        .float-card.f1 {
+            top: -18px;
+            right: 24px;
+            animation-delay: 0s
+        }
+
+        .float-card.f2 {
+            bottom: 40px;
+            left: -24px;
+            animation-delay: 1.4s
+        }
+
+        .float-card.f3 {
+            top: 40%;
+            right: -22px;
+            animation-delay: .7s
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-9px)
+            }
+        }
+
+        .sr {
+            opacity: 0;
+            transform: translateY(42px);
+            transition: opacity .8s cubic-bezier(.16, 1, .3, 1), transform .8s cubic-bezier(.16, 1, .3, 1)
+        }
+
+        .sr.up {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        .sr.d1 {
+            transition-delay: .1s
+        }
+
+        .sr.d2 {
+            transition-delay: .2s
+        }
+
+        .sr.d3 {
+            transition-delay: .3s
+        }
+
+        .sr.d4 {
+            transition-delay: .4s
+        }
+
+        .sr.d5 {
+            transition-delay: .5s
+        }
+
+        .section-wrap {
+            position: relative;
+            z-index: 1
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5%
+        }
+
+        .sec-pad {
+            padding: 110px 0
+        }
+
+        .sec-half {
+            padding: 80px 0
+        }
+
+        .eyebrow {
+            font-family: var(--fD);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--lime);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 32px;
+            height: 1px;
+            background: var(--lime)
+        }
+
+        .sec-h2 {
+            font-family: var(--fD);
+            font-size: clamp(36px, 4.5vw, 64px);
+            font-weight: 900;
+            line-height: .95;
+            letter-spacing: -2px;
+            margin-bottom: 20px
+        }
+
+        .sec-h2 em {
+            font-style: italic;
+            color: var(--lime)
+        }
+
+        .sec-sub {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--muted3);
+            font-weight: 300;
+            max-width: 520px
+        }
+
+        .rule {
+            height: 1px;
+            background: var(--edge)
+        }
+
+        .sport-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            margin-top: 60px
+        }
+
+        .sport-panel {
+            padding: 50px 44px;
+            position: relative;
+            overflow: hidden;
+            transition: transform .35s ease
+        }
+
+        .sport-panel:hover {
+            transform: scale(1.01);
+            z-index: 2
+        }
+
+        .sport-panel.cr {
+            background: linear-gradient(140deg, #080f0c, #0c1812);
+            border: 1px solid rgba(212, 255, 0, .08)
+        }
+
+        .sport-panel.fb {
+            background: linear-gradient(140deg, #100c08, #1a1008);
+            border: 1px solid rgba(255, 87, 34, .08)
+        }
+
+        .sport-panel::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            opacity: .07;
+            pointer-events: none
+        }
+
+        .sport-panel.cr::after {
+            background: var(--lime);
+            transform: translate(40%, 40%)
+        }
+
+        .sport-panel.fb::after {
+            background: var(--orange);
+            transform: translate(40%, 40%)
+        }
+
+        .sp-icon {
+            font-size: 52px;
+            margin-bottom: 18px;
+            display: block
+        }
+
+        .sp-name {
+            font-family: var(--fD);
+            font-size: 40px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1;
+            margin-bottom: 14px
+        }
+
+        .sport-panel.cr .sp-name {
+            color: var(--lime)
+        }
+
+        .sport-panel.fb .sp-name {
+            color: var(--orange)
+        }
+
+        .sp-desc {
+            font-size: 14px;
+            color: var(--muted3);
+            line-height: 1.75;
+            margin-bottom: 26px;
+            font-weight: 300
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 9px
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--muted3);
+            line-height: 1.5
+        }
+
+        .feature-list .mark {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px
+        }
+
+        .sport-panel.cr .mark {
+            color: var(--lime)
+        }
+
+        .sport-panel.fb .mark {
+            color: var(--orange)
+        }
+
+        #how {
+            background: var(--bg2)
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            margin-top: 60px;
+            position: relative
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 38px;
+            left: 15%;
+            right: 15%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--lime) 30%, var(--cyan) 70%, transparent 100%);
+            opacity: .3
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0 18px;
+            position: relative
+        }
+
+        .step-num {
+            width: 76px;
+            height: 76px;
+            border: 1.5px solid var(--edge2);
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--fD);
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--lime);
+            margin-bottom: 22px;
+            clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+            transition: all .3s;
+            position: relative;
+            z-index: 1
+        }
+
+        .step:hover .step-num {
+            background: var(--lime);
+            color: var(--bg);
+            box-shadow: 0 0 40px rgba(212, 255, 0, .5)
+        }
+
+        .step-emoji {
+            font-size: 28px;
+            margin-bottom: 12px
+        }
+
+        .step-title {
+            font-family: var(--fD);
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -.5px
+        }
+
+        .step-desc {
+            font-size: 12px;
+            color: var(--muted2);
+            line-height: 1.65
+        }
+
+        .metrics-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 64px;
+            align-items: center;
+            margin-top: 56px
+        }
+
+        .metric-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 3px
+        }
+
+        .metric-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            border: 1px solid transparent;
+            transition: all .25s;
+            cursor: default
+        }
+
+        .metric-row:hover {
+            background: rgba(212, 255, 0, .03);
+            border-color: rgba(212, 255, 0, .12);
+            transform: translateX(5px)
+        }
+
+        .mr-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%)
+        }
+
+        .ic1 {
+            background: rgba(212, 255, 0, .1)
+        }
+
+        .ic2 {
+            background: rgba(0, 212, 255, .1)
+        }
+
+        .ic3 {
+            background: rgba(255, 87, 34, .1)
+        }
+
+        .ic4 {
+            background: rgba(124, 92, 252, .1)
+        }
+
+        .ic5 {
+            background: rgba(0, 230, 118, .1)
+        }
+
+        .ic6 {
+            background: rgba(255, 184, 0, .1)
+        }
+
+        .ic7 {
+            background: rgba(212, 255, 0, .1)
+        }
+
+        .ic8 {
+            background: rgba(0, 212, 255, .1)
+        }
+
+        .mr-text {
+            flex: 1
+        }
+
+        .mr-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px
+        }
+
+        .mr-desc {
+            font-size: 11px;
+            color: var(--muted2)
+        }
+
+        .mr-val {
+            font-family: var(--fD);
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--lime);
+            letter-spacing: 1px
+        }
+
+        .scorecard {
+            background: var(--bg2);
+            border: 1px solid var(--edge);
+            padding: 0;
+            overflow: hidden;
+            position: relative
+        }
+
+        .scorecard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--violet), var(--cyan), var(--lime))
+        }
+
+        .sc-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--edge);
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .sc-player-name {
+            font-family: var(--fD);
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -.5px
+        }
+
+        .sc-badge {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            padding: 3px 10px;
+            background: rgba(0, 212, 255, .1);
+            color: var(--cyan);
+            border: 1px solid rgba(0, 212, 255, .2)
+        }
+
+        .sc-big-score {
+            padding: 28px 22px 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 14px;
+            background: linear-gradient(135deg, rgba(212, 255, 0, .04), rgba(0, 212, 255, .03));
+            border-bottom: 1px solid var(--edge)
+        }
+
+        .sc-num {
+            font-family: var(--fD);
+            font-size: 80px;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--lime);
+            letter-spacing: -4px
+        }
+
+        .sc-meta {
+            padding-bottom: 6px
+        }
+
+        .sc-grade {
+            font-family: var(--fD);
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--muted3)
+        }
+
+        .sc-label {
+            font-size: 11px;
+            color: var(--muted2);
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        .sc-bars {
+            padding: 18px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 11px
+        }
+
+        .sc-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .sc-bar-l {
+            font-size: 10px;
+            color: var(--muted2);
+            width: 108px;
+            flex-shrink: 0;
+            text-transform: uppercase;
+            letter-spacing: .5px
+        }
+
+        .sc-bar-track {
+            flex: 1;
+            height: 4px;
+            background: var(--surface);
+            overflow: hidden
+        }
+
+        .sc-bar-fill {
+            height: 100%;
+            width: 0;
+            transition: width 1.8s cubic-bezier(.16, 1, .3, 1)
+        }
+
+        .sc-bar-v {
+            font-family: var(--fD);
+            font-size: 13px;
+            font-weight: 700;
+            width: 38px;
+            text-align: right
+        }
+
+        #bestxi {
+            background: var(--bg2)
+        }
+
+        .xi-row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 60px
+        }
+
+        .xi-card {
+            border: 1px solid var(--edge);
+            overflow: hidden
+        }
+
+        .xi-card.cr {
+            background: linear-gradient(160deg, #080f0b, #0c1510)
+        }
+
+        .xi-card.fb {
+            background: linear-gradient(160deg, #0f0904, #160f08)
+        }
+
+        .xi-card-head {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--edge);
+            display: flex;
+            align-items: center;
+            gap: 14px
+        }
+
+        .xi-card-icon {
+            font-size: 28px
+        }
+
+        .xi-card-title {
+            font-family: var(--fD);
+            font-size: 22px;
+            font-weight: 900
+        }
+
+        .xi-card.cr .xi-card-title {
+            color: var(--lime)
+        }
+
+        .xi-card.fb .xi-card-title {
+            color: var(--orange)
+        }
+
+        .xi-card-sub {
+            font-size: 11px;
+            color: var(--muted2);
+            margin-top: 1px;
+            letter-spacing: 1px
+        }
+
+        .xi-pitch {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center
+        }
+
+        .xi-row-f {
+            display: flex;
+            gap: 8px;
+            justify-content: center
+        }
+
+        .xp {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 7px 10px;
+            min-width: 56px;
+            text-align: center;
+            border: 1px solid transparent;
+            transition: all .2s;
+            cursor: default
+        }
+
+        .xp:hover {
+            transform: translateY(-3px)
+        }
+
+        .xp .xi {
+            font-size: 16px;
+            margin-bottom: 3px
+        }
+
+        .xp .xn {
+            font-size: 10px;
+            font-weight: 700
+        }
+
+        .xp .xr {
+            font-size: 9px;
+            opacity: .55;
+            margin-top: 1px
+        }
+
+        .xp-bat {
+            background: rgba(212, 255, 0, .05);
+            border-color: rgba(212, 255, 0, .12)
+        }
+
+        .xp-wk {
+            background: rgba(0, 212, 255, .05);
+            border-color: rgba(0, 212, 255, .12)
+        }
+
+        .xp-ar {
+            background: rgba(124, 92, 252, .06);
+            border-color: rgba(124, 92, 252, .15)
+        }
+
+        .xp-bowl {
+            background: rgba(255, 87, 34, .05);
+            border-color: rgba(255, 87, 34, .12)
+        }
+
+        .xp-gk {
+            background: rgba(0, 230, 118, .05);
+            border-color: rgba(0, 230, 118, .12)
+        }
+
+        .xp-def {
+            background: rgba(0, 212, 255, .05);
+            border-color: rgba(0, 212, 255, .12)
+        }
+
+        .xp-mid {
+            background: rgba(124, 92, 252, .06);
+            border-color: rgba(124, 92, 252, .15)
+        }
+
+        .xp-fwd {
+            background: rgba(255, 87, 34, .06);
+            border-color: rgba(255, 87, 34, .14)
+        }
+
+        .xi-selection-note {
+            padding: 14px 24px;
+            border-top: 1px solid var(--edge);
+            font-size: 11px;
+            color: var(--muted2);
+            line-height: 1.6
+        }
+
+        #ticker {
+            background: var(--lime);
+            padding: 0;
+            overflow: hidden;
+            position: relative
+        }
+
+        .ticker-inner {
+            display: flex;
+            animation: ticker 35s linear infinite;
+            width: max-content
+        }
+
+        .ticker-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 40px;
+            font-family: var(--fD);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--bg);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap
+        }
+
+        .ticker-item .tick-sep {
+            opacity: .3
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(0)
+            }
+
+            100% {
+                transform: translateX(-50%)
+            }
+        }
+
+        .stats-band {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border: 1px solid var(--edge)
+        }
+
+        .sb-item {
+            padding: 42px 28px;
+            text-align: center;
+            border-right: 1px solid var(--edge);
+            transition: background .3s
+        }
+
+        .sb-item:last-child {
+            border-right: none
+        }
+
+        .sb-item:hover {
+            background: rgba(212, 255, 0, .03)
+        }
+
+        .sb-n {
+            font-family: var(--fD);
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--lime);
+            line-height: 1;
+            letter-spacing: -2px
+        }
+
+        .sb-n .plus {
+            font-size: 30px;
+            color: var(--muted3)
+        }
+
+        .sb-l {
+            font-size: 11px;
+            color: var(--muted3);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 8px
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            margin-top: 56px
+        }
+
+        .tech-card {
+            background: var(--bg2);
+            border: 1px solid var(--edge);
+            padding: 30px 26px;
+            transition: all .3s;
+            position: relative;
+            overflow: hidden
+        }
+
+        .tech-card::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: transparent;
+            transition: background .3s
+        }
+
+        .tech-card:hover {
+            border-color: var(--edge2);
+            transform: translateY(-4px)
+        }
+
+        .tech-card:hover::before {
+            background: linear-gradient(90deg, var(--lime), var(--cyan))
+        }
+
+        .tc-icon {
+            font-size: 34px;
+            margin-bottom: 14px
+        }
+
+        .tc-name {
+            font-family: var(--fD);
+            font-size: 19px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -.5px
+        }
+
+        .tc-desc {
+            font-size: 12px;
+            color: var(--muted2);
+            line-height: 1.7;
+            margin-bottom: 14px
+        }
+
+        .tc-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px
+        }
+
+        .tc-tag {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            background: var(--surface);
+            color: var(--muted3);
+            border: 1px solid var(--edge)
+        }
+
+        #roles {
+            background: var(--bg2)
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 56px
+        }
+
+        .role-card {
+            border: 1px solid var(--edge);
+            padding: 38px 34px;
+            transition: transform .3s, box-shadow .3s;
+            position: relative;
+            overflow: hidden
+        }
+
+        .role-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px
+        }
+
+        .role-card.admin {
+            background: linear-gradient(135deg, #0b0918, #11102a)
+        }
+
+        .role-card.admin::after {
+            background: var(--violet)
+        }
+
+        .role-card.coach {
+            background: linear-gradient(135deg, #081018, #0c1c28)
+        }
+
+        .role-card.coach::after {
+            background: var(--cyan)
+        }
+
+        .role-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, .4)
+        }
+
+        .rc-icon {
+            font-size: 40px;
+            margin-bottom: 16px
+        }
+
+        .rc-name {
+            font-family: var(--fD);
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: -.5px;
+            margin-bottom: 8px
+        }
+
+        .role-card.admin .rc-name {
+            color: var(--violet)
+        }
+
+        .role-card.coach .rc-name {
+            color: var(--cyan)
+        }
+
+        .rc-desc {
+            font-size: 13px;
+            color: var(--muted3);
+            line-height: 1.75;
+            margin-bottom: 22px;
+            font-weight: 300
+        }
+
+        .rc-perms {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .rc-perms li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--muted3)
+        }
+
+        .pchk {
+            font-size: 10px
+        }
+
+        .role-card.admin .pchk {
+            color: var(--violet)
+        }
+
+        .role-card.coach .pchk {
+            color: var(--cyan)
+        }
+
+        #cta {
+            position: relative;
+            overflow: hidden;
+            padding: 130px 0;
+            background: var(--bg)
+        }
+
+        #cta::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212, 255, 0, .05) 0%, transparent 70%);
+            pointer-events: none
+        }
+
+        .cta-inner {
+            max-width: 760px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 5%
+        }
+
+        .cta-eyebrow {
+            font-family: var(--fD);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--lime);
+            margin-bottom: 20px
+        }
+
+        .cta-h2 {
+            font-family: var(--fD);
+            font-size: clamp(42px, 6vw, 82px);
+            font-weight: 900;
+            line-height: .93;
+            letter-spacing: -3px;
+            margin-bottom: 24px
+        }
+
+        .cta-h2 em {
+            font-style: italic;
+            color: var(--lime)
+        }
+
+        .cta-p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--muted3);
+            margin-bottom: 46px;
+            font-weight: 300;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto
+        }
+
+        .cta-btns {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 32px
+        }
+
+        .btn-cta-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 48px;
+            background: var(--lime);
+            color: var(--bg);
+            font-family: var(--fD);
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            clip-path: polygon(14px 0%, 100% 0%, calc(100% - 14px) 100%, 0% 100%);
+            transition: all .3s
+        }
+
+        .btn-cta-main:hover {
+            background: #fff;
+            transform: translateY(-4px);
+            box-shadow: 0 24px 60px rgba(212, 255, 0, .45)
+        }
+
+        .btn-cta-sec {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 36px;
+            border: 1.5px solid var(--edge2);
+            color: var(--muted3);
+            font-family: var(--fD);
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+            transition: all .3s
+        }
+
+        .btn-cta-sec:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            transform: translateY(-4px)
+        }
+
+        .cta-creds {
+            font-size: 12px;
+            color: var(--muted2)
+        }
+
+        .cta-creds strong {
+            color: var(--lime)
+        }
+
+        footer {
+            border-top: 1px solid var(--edge);
+            padding: 32px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            position: relative;
+            z-index: 1
+        }
+
+        .footer-brand {
+            font-family: var(--fD);
+            font-size: 18px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        .footer-brand .iq {
+            background: var(--lime);
+            color: var(--bg);
+            padding: 1px 7px;
+            font-size: 14px;
+            clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%)
+        }
+
+        .footer-note {
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        .footer-pills {
+            display: flex;
+            gap: 10px
+        }
+
+        .footer-pill {
+            font-size: 10px;
+            color: var(--muted2);
+            padding: 4px 10px;
+            border: 1px solid var(--edge);
+            letter-spacing: .5px
+        }
+
+        @media(max-width:960px) {
+            #hero {
+                grid-template-columns: 1fr;
+                padding: 100px 5% 60px
+            }
+
+            #hero::after {
+                display: none
+            }
+
+            .hero-right {
+                display: none
+            }
+
+            .sport-grid {
+                grid-template-columns: 1fr
+            }
+
+            .steps {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .steps::before {
+                display: none
+            }
+
+            .metrics-layout {
+                grid-template-columns: 1fr
+            }
+
+            .xi-row-grid {
+                grid-template-columns: 1fr
+            }
+
+            .tech-grid {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .stats-band {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .sb-item:nth-child(2) {
+                border-right: none
+            }
+
+            .roles-grid {
+                grid-template-columns: 1fr
+            }
+
+            .nav-links {
+                display: none
+            }
+        }
+
+        @media(max-width:560px) {
+            .tech-grid {
+                grid-template-columns: 1fr
+            }
+
+            .stats-band {
+                grid-template-columns: 1fr
+            }
+
+            .sb-item {
+                border-right: none;
+                border-bottom: 1px solid var(--edge)
+            }
+
+            .hero-stats {
+                flex-wrap: wrap;
+                gap: 18px
+            }
+
+            .cta-btns {
+                flex-direction: column;
+                align-items: center
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+
+    <nav id="nav">
+        <div class="nav-brand"><span class="brand-ath">Athlete</span><span class="brand-iq">IQ</span></div>
+        <ul class="nav-links">
+            <li><a href="#sports">Sports</a></li>
+            <li><a href="#how">Workflow</a></li>
+            <li><a href="#analytics">Analytics</a></li>
+            <li><a href="#bestxi">Best XI</a></li>
+            <li><a href="#tech">Technology</a></li>
+            <li><a href="#roles">Access</a></li>
+        </ul>
+        <a href="#cta" class="nav-btn">⚡ Get Access</a>
+    </nav>
+
+    <section id="hero" class="section-wrap">
+        <div class="hero-left">
+            <div class="hero-tag sr"><span class="blink"></span>AI Sports Intelligence for Coaches</div>
+            <h1 class="hero-h1 sr d1">Analyse.<br><em>Predict.</em><br><span class="ghost">Select.</span></h1>
+            <p class="hero-p sr d2">Sports Intel AI is an AI-powered coaching intelligence platform for cricket &amp;
+                football
+                — delivering deep player analytics, injury forecasting, neural match predictions, and ML-driven Best XI
+                team selection across 272 real international player records.</p>
+            <div class="hero-cta-row sr d3">
+                <a href="/auth" class="btn-primary">⚡ Launch Platform</a>
+                <a href="#how" class="btn-outline">▶ See How It Works</a>
+            </div>
+            <div class="hero-stats sr d4">
+                <div class="hstat"><span class="hstat-n" data-target="272">0</span><span class="hstat-l">Player
+                        Records</span></div>
+                <div class="hstat"><span class="hstat-n" data-target="17">0</span><span class="hstat-l">National
+                        Teams</span></div>
+                <div class="hstat"><span class="hstat-n" data-target="25">0</span><span class="hstat-l">+ Analytics
+                        Metrics</span></div>
+                <div class="hstat"><span class="hstat-n" data-target="2">0</span><span class="hstat-l">ML Models</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-right sr d2">
+            <div class="float-card f1"><span style="color:var(--lime);font-size:18px;">📈</span><span>Impact Score
+                    <strong style="color:var(--lime);">+18%</strong></span></div>
+            <div class="float-card f2"><span style="font-size:18px;">⚠️</span><span>Injury Risk <strong
+                        style="color:var(--orange);">24%</strong></span></div>
+            <div class="float-card f3" style="flex-direction:column;align-items:flex-start;gap:4px;">
+                <div style="font-size:10px;color:var(--muted2);letter-spacing:1px;">DEEP AI ENGINE</div>
+                <div style="font-family:var(--fD);font-size:20px;font-weight:900;color:var(--cyan);">87 / 100</div>
+            </div>
+            <div class="dash-mock">
+                <div class="dm-topbar">
+                    <div class="dm-tb-left">
+                        <div class="dm-dot" style="background:#ff5f57;"></div>
+                        <div class="dm-dot" style="background:#ffbd2e;"></div>
+                        <div class="dm-dot" style="background:#28c840;"></div><span
+                            style="margin-left:10px;"></span><span class="dm-title">Sports Intel AI — Player
+                            Analysis</span>
+                    </div>
+                    <div class="live-pill">● LIVE</div>
+                </div>
+                <div class="dm-body">
+                    <div class="dm-player-row">
+                        <div class="dm-avatar">🏏</div>
+                        <div>
+                            <div class="dm-player-name">Virat Kohli</div>
+                            <div class="dm-player-meta">Batter &nbsp;·&nbsp; India &nbsp;·&nbsp; International</div>
+                        </div>
+                        <div class="dm-grade-tag">A+</div>
+                    </div>
+                    <div class="dm-score-row">
+                        <div class="dm-score">
+                            <div class="dm-score-n" style="color:var(--lime);">88</div>
+                            <div class="dm-score-l">Impact Score</div>
+                        </div>
+                        <div class="dm-score">
+                            <div class="dm-score-n" style="color:var(--cyan);">92</div>
+                            <div class="dm-score-l">Consistency</div>
+                        </div>
+                        <div class="dm-score">
+                            <div class="dm-score-n" style="color:var(--orange);">18%</div>
+                            <div class="dm-score-l">Inj. Risk</div>
+                        </div>
+                    </div>
+                    <div class="dm-chart-area">
+                        <svg class="chart-svg" viewBox="0 0 300 72" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#D4FF00" stop-opacity="0.3" />
+                                    <stop offset="100%" stop-color="#D4FF00" stop-opacity="0" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M 0 55 L 42 45 L 85 30 L 128 38 L 170 20 L 213 14 L 256 22 L 300 10"
+                                stroke="#D4FF00" stroke-width="2" fill="none" stroke-linecap="round" />
+                            <path
+                                d="M 0 55 L 42 45 L 85 30 L 128 38 L 170 20 L 213 14 L 256 22 L 300 10 L 300 72 L 0 72 Z"
+                                fill="url(#chartGrad)" />
+                            <circle cx="85" cy="30" r="3" fill="#D4FF00" />
+                            <circle cx="170" cy="20" r="3" fill="#D4FF00" />
+                            <circle cx="256" cy="22" r="3" fill="#D4FF00" />
+                            <circle cx="300" cy="10" r="4" fill="#fff" stroke="#D4FF00" stroke-width="2" />
+                        </svg>
+                        <div
+                            style="position:absolute;bottom:2px;right:0;font-size:9px;color:var(--muted2);letter-spacing:.5px;">
+                            LAST 5 MATCHES</div>
+                    </div>
+                    <div class="dm-mini-grid">
+                        <div class="dm-mini"><span class="dm-mini-l">Batting Avg</span><span class="dm-mini-v"
+                                style="color:var(--lime);">53.4</span></div>
+                        <div class="dm-mini"><span class="dm-mini-l">Strike Rate</span><span class="dm-mini-v"
+                                style="color:var(--cyan);">93.2</span></div>
+                        <div class="dm-mini"><span class="dm-mini-l">Fatigue</span><span class="dm-mini-v"
+                                style="color:var(--amber);">32%</span></div>
+                        <div class="dm-mini"><span class="dm-mini-l">Form Index</span><span class="dm-mini-v"
+                                style="color:var(--violet);">84</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="ticker" class="section-wrap">
+        <div class="ticker-inner" id="tickerTrack"></div>
+    </div>
+
+    <section id="sports" class="section-wrap sec-pad">
+        <div class="container">
+            <div class="eyebrow sr">Sports Coverage</div>
+            <h2 class="sec-h2 sr d1">Two sports.<br><em>Real data. Deep insight.</em></h2>
+            <p class="sec-sub sr d2">Sport-specific analytics pipelines with real international player data — delivering
+                role-aware insights for batters, bowlers, keepers, forwards, midfielders and more.</p>
+            <div class="sport-grid">
+                <div class="sport-panel cr sr d2">
+                    <span class="sp-icon">🏏</span>
+                    <div class="sp-name">CRICKET</div>
+                    <p class="sp-desc">160 real international players across 10 top-ranked nations. Role-aware analysis
+                        for Batters, Bowlers, All-Rounders &amp; Wicketkeepers with real career stats.</p>
+                    <ul class="feature-list">
+                        <li><span class="mark">◆</span>Player Impact Score (0–100) with Consistency &amp; Form Index
+                        </li>
+                        <li><span class="mark">◆</span>Batting Average, Strike Rate &amp; Centuries/Fifties tracking
+                        </li>
+                        <li><span class="mark">◆</span>Bowling Economy, Wickets, 5-Wicket Hauls &amp; Bowling Average
+                        </li>
+                        <li><span class="mark">◆</span>Injury Risk % — age, workload &amp; fitness model</li>
+                        <li><span class="mark">◆</span>Fatigue Probability % — match load analysis</li>
+                        <li><span class="mark">◆</span>Deep AI Engine — neural predictions with pitch &amp; venue
+                            conditions</li>
+                        <li><span class="mark">◆</span>Expected Runs, Strike Rate &amp; Wickets for next match</li>
+                        <li><span class="mark">◆</span>Performance Trend Chart + Capability Radar</li>
+                        <li><span class="mark">◆</span>ML-Powered Best Playing XI with role-balanced selection</li>
+                        <li><span class="mark">◆</span>Head-to-Head Player Comparison across teams</li>
+                    </ul>
+                </div>
+                <div class="sport-panel fb sr d3">
+                    <span class="sp-icon">⚽</span>
+                    <div class="sp-name">FOOTBALL</div>
+                    <p class="sp-desc">112 real international players across 7 top football nations. European-standard
+                        analytics with per-90 stats, xG modelling, and position-aware breakdown.</p>
+                    <ul class="feature-list">
+                        <li><span class="mark">◆</span>Performance Rating (0–100) + Form Index &amp; Consistency</li>
+                        <li><span class="mark">◆</span>Goals, Assists, Pass Accuracy, Shots on Target, Tackles</li>
+                        <li><span class="mark">◆</span>Key Passes/90, Cross Accuracy &amp; Shot Accuracy</li>
+                        <li><span class="mark">◆</span>Stamina Level &amp; Physical Performance Metrics</li>
+                        <li><span class="mark">◆</span>Player Impact Score — composite offensive &amp; defensive rating
+                        </li>
+                        <li><span class="mark">◆</span>Injury Risk % &amp; Fatigue Probability %</li>
+                        <li><span class="mark">◆</span>Deep AI Engine — predicted goals, assists &amp; impact
+                            probability</li>
+                        <li><span class="mark">◆</span>Performance Trend (Last 5 Matches) + Radar Chart</li>
+                        <li><span class="mark">◆</span>ML-Powered Best XI — 4-4-2 formation with positional balance</li>
+                        <li><span class="mark">◆</span>Head-to-Head comparison with role-matched opponent filtering</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="rule section-wrap"></div>
+
+    <section id="how" class="section-wrap sec-pad">
+        <div class="container">
+            <div class="eyebrow sr">Workflow</div>
+            <h2 class="sec-h2 sr d1">From login to<br><em>deep insight</em> in 4 steps.</h2>
+            <div class="steps">
+                <div class="step sr d1">
+                    <div class="step-num">01</div>
+                    <div class="step-emoji">🔐</div>
+                    <div class="step-title">Authenticate</div>
+                    <p class="step-desc">Sign in as Admin or Coach via email/password or Google. Firebase Auth with
+                        role-based access controls your permissions across the platform.</p>
+                </div>
+                <div class="step sr d2">
+                    <div class="step-num">02</div>
+                    <div class="step-emoji">🏆</div>
+                    <div class="step-title">Select Discipline</div>
+                    <p class="step-desc">Choose Cricket or Football. Each sport has its own dedicated analytics engine,
+                        player database, and AI prediction pipeline.</p>
+                </div>
+                <div class="step sr d3">
+                    <div class="step-num">03</div>
+                    <div class="step-emoji">👤</div>
+                    <div class="step-title">Pick Your Team</div>
+                    <p class="step-desc">Select from 10 cricket or 7 football national teams. Browse 16 players per
+                        squad with search, role filters and player images.</p>
+                </div>
+                <div class="step sr d4">
+                    <div class="step-num">04</div>
+                    <div class="step-emoji">📊</div>
+                    <div class="step-title">Deep Analytics</div>
+                    <p class="step-desc">View the full ML analysis — impact scores, risk assessment, neural predictions,
+                        interactive charts, comparisons and Best XI recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="rule section-wrap"></div>
+
+    <section id="analytics" class="section-wrap sec-pad" style="background:var(--bg2);">
+        <div class="container">
+            <div class="eyebrow sr">Intelligence Engine</div>
+            <h2 class="sec-h2 sr d1">Every metric<br><em>that matters.</em></h2>
+            <p class="sec-sub sr d2">25+ advanced performance indicators computed from real career data, fitness
+                modelling and match history — from raw statistics to neural-predicted future outcomes.</p>
+            <div class="metrics-layout">
+                <div class="metric-rows">
+                    <div class="metric-row sr d1">
+                        <div class="mr-icon ic1">📊</div>
+                        <div class="mr-text">
+                            <div class="mr-name">Player Impact Score</div>
+                            <div class="mr-desc">Composite score from career metrics, form &amp; consistency (0–100)
+                            </div>
+                        </div>
+                        <div class="mr-val">0–100</div>
+                    </div>
+                    <div class="metric-row sr d2">
+                        <div class="mr-icon ic2">⚠️</div>
+                        <div class="mr-text">
+                            <div class="mr-name">Injury Risk Assessment</div>
+                            <div class="mr-desc">Age, workload &amp; fitness-weighted risk probability model</div>
+                        </div>
+                        <div class="mr-val">RISK%</div>
+                    </div>
+                    <div class="metric-row sr d3">
+                        <div class="mr-icon ic3">🔮</div>
+                        <div class="mr-text">
+                            <div class="mr-name">Deep AI Neural Prediction</div>
+                            <div class="mr-desc">Context-aware prediction with pitch, venue &amp; opponent modelling
+                            </div>
+                        </div>
+                        <div class="mr-val">ML</div>
+                    </div>
+                    <div class="metric-row sr d1">
+                        <div class="mr-icon ic4">⚡</div>
+                        <div class="mr-text">
+                            <div class="mr-name">Consistency &amp; Form Index</div>
+                            <div class="mr-desc">Performance variance &amp; recent form scoring over last 5 matches
+                            </div>
+                        </div>
+                        <div class="mr-val">INDEX</div>
+                    </div>
+                    <div class="metric-row sr d2">
+                        <div class="mr-icon ic5">💪</div>
+                        <div class="mr-text">
+                            <div class="mr-name">Fitness &amp; Fatigue Index</div>
+                            <div class="mr-desc">Match load, minutes played and recovery modelling</div>
+                        </div>
+                        <div class="mr-val">INDEX</div>
+                    </div>
+                    <div class="metric-row sr d3">
+                        <div class="mr-icon ic6">🎯</div>
+                        <div class="mr-text">
+                            <div class="mr-name">Capability Radar</div>
+                            <div class="mr-desc">Multi-axis skill visualisation — role-adapted for each position</div>
+                        </div>
+                        <div class="mr-val">CHART</div>
+                    </div>
+                    <div class="metric-row sr d1">
+                        <div class="mr-icon ic7">⚔️</div>
+                        <div class="mr-text">
+                            <div class="mr-name">Head-to-Head Comparison</div>
+                            <div class="mr-desc">Side-by-side analysis with role-matched opponent filtering</div>
+                        </div>
+                        <div class="mr-val">VS</div>
+                    </div>
+                    <div class="metric-row sr d2">
+                        <div class="mr-icon ic8">🏅</div>
+                        <div class="mr-text">
+                            <div class="mr-name">Best XI Selection</div>
+                            <div class="mr-desc">ML-scored optimal playing 11 with role &amp; positional balance</div>
+                        </div>
+                        <div class="mr-val">XI</div>
+                    </div>
+                </div>
+                <div class="scorecard sr d3" id="scorecard">
+                    <div class="sc-header">
+                        <div class="sc-player-name">Lionel Messi</div><span class="sc-badge">⚽ FORWARD</span>
+                    </div>
+                    <div class="sc-big-score">
+                        <div class="sc-num" id="scNum">0</div>
+                        <div class="sc-meta">
+                            <div class="sc-grade">GRADE: A+</div>
+                            <div class="sc-label">Impact Score: 94 / 100</div>
+                        </div>
+                    </div>
+                    <div class="sc-bars">
+                        <div class="sc-bar-row"><span class="sc-bar-l">Goals</span>
+                            <div class="sc-bar-track">
+                                <div class="sc-bar-fill" style="background:var(--lime);" data-w="96"></div>
+                            </div><span class="sc-bar-v" style="color:var(--lime);">96</span>
+                        </div>
+                        <div class="sc-bar-row"><span class="sc-bar-l">Assists</span>
+                            <div class="sc-bar-track">
+                                <div class="sc-bar-fill" style="background:var(--cyan);" data-w="91"></div>
+                            </div><span class="sc-bar-v" style="color:var(--cyan);">91</span>
+                        </div>
+                        <div class="sc-bar-row"><span class="sc-bar-l">Pass Accuracy</span>
+                            <div class="sc-bar-track">
+                                <div class="sc-bar-fill" style="background:var(--violet);" data-w="85"></div>
+                            </div><span class="sc-bar-v" style="color:var(--violet);">85%</span>
+                        </div>
+                        <div class="sc-bar-row"><span class="sc-bar-l">Stamina</span>
+                            <div class="sc-bar-track">
+                                <div class="sc-bar-fill" style="background:var(--orange);" data-w="78"></div>
+                            </div><span class="sc-bar-v" style="color:var(--orange);">78</span>
+                        </div>
+                        <div class="sc-bar-row"><span class="sc-bar-l">Consistency</span>
+                            <div class="sc-bar-track">
+                                <div class="sc-bar-fill" style="background:var(--lime);" data-w="93"></div>
+                            </div><span class="sc-bar-v" style="color:var(--lime);">93</span>
+                        </div>
+                        <div class="sc-bar-row"><span class="sc-bar-l">Injury Risk</span>
+                            <div class="sc-bar-track">
+                                <div class="sc-bar-fill" style="background:var(--green);" data-w="22"></div>
+                            </div><span class="sc-bar-v" style="color:var(--green);">22%</span>
+                        </div>
+                        <div class="sc-bar-row"><span class="sc-bar-l">Form Index</span>
+                            <div class="sc-bar-track">
+                                <div class="sc-bar-fill" style="background:var(--amber);" data-w="88"></div>
+                            </div><span class="sc-bar-v" style="color:var(--amber);">88</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="rule section-wrap"></div>
+
+    <section id="bestxi" class="section-wrap sec-pad">
+        <div class="container">
+            <div class="eyebrow sr">AI Team Selection</div>
+            <h2 class="sec-h2 sr d1">AI picks the<br><em>Best Playing XI.</em></h2>
+            <p class="sec-sub sr d2">Sports Intel AI automatically selects the optimal playing 11 for both sports —
+                balancing
+                ML scores, fitness, role coverage and positional requirements from the full squad.</p>
+            <div class="xi-row-grid">
+                <div class="xi-card cr sr d2">
+                    <div class="xi-card-head">
+                        <div class="xi-card-icon">🏏</div>
+                        <div>
+                            <div class="xi-card-title">Cricket Best XI</div>
+                            <div class="xi-card-sub">ML Scoring · Role-Balanced Selection</div>
+                        </div>
+                    </div>
+                    <div class="xi-pitch">
+                        <div class="xi-row-f">
+                            <div class="xp xp-wk"><span class="xi">🧤</span><span class="xn">Pant</span><span
+                                    class="xr">WK</span></div>
+                        </div>
+                        <div class="xi-row-f">
+                            <div class="xp xp-bat"><span class="xi">🏏</span><span class="xn">Kohli</span><span
+                                    class="xr">BAT</span></div>
+                            <div class="xp xp-bat"><span class="xi">🏏</span><span class="xn">Smith</span><span
+                                    class="xr">BAT</span></div>
+                            <div class="xp xp-bat"><span class="xi">🏏</span><span class="xn">Root</span><span
+                                    class="xr">BAT</span></div>
+                            <div class="xp xp-bat"><span class="xi">🏏</span><span class="xn">Babar</span><span
+                                    class="xr">BAT</span></div>
+                        </div>
+                        <div class="xi-row-f">
+                            <div class="xp xp-ar"><span class="xi">⭐</span><span class="xn">Stokes</span><span
+                                    class="xr">AR</span></div>
+                            <div class="xp xp-ar"><span class="xi">⭐</span><span class="xn">Jadeja</span><span
+                                    class="xr">AR</span></div>
+                        </div>
+                        <div class="xi-row-f">
+                            <div class="xp xp-bowl"><span class="xi">🎯</span><span class="xn">Bumrah</span><span
+                                    class="xr">BOWL</span></div>
+                            <div class="xp xp-bowl"><span class="xi">🎯</span><span class="xn">Starc</span><span
+                                    class="xr">BOWL</span></div>
+                            <div class="xp xp-bowl"><span class="xi">🎯</span><span class="xn">Cummins</span><span
+                                    class="xr">BOWL</span></div>
+                            <div class="xp xp-bowl"><span class="xi">🎯</span><span class="xn">Rashid</span><span
+                                    class="xr">BOWL</span></div>
+                        </div>
+                    </div>
+                    <div class="xi-selection-note">Selected by ML scoring using impact score, fitness, batting average,
+                        bowling economy and role balance across 160 cricket records from 10 teams.</div>
+                </div>
+                <div class="xi-card fb sr d3">
+                    <div class="xi-card-head">
+                        <div class="xi-card-icon">⚽</div>
+                        <div>
+                            <div class="xi-card-title">Football Best XI</div>
+                            <div class="xi-card-sub">ML Scoring · 4-4-2 Formation</div>
+                        </div>
+                    </div>
+                    <div class="xi-pitch">
+                        <div class="xi-row-f">
+                            <div class="xp xp-gk"><span class="xi">🧤</span><span class="xn">Alisson</span><span
+                                    class="xr">GK</span></div>
+                        </div>
+                        <div class="xi-row-f">
+                            <div class="xp xp-def"><span class="xi">🛡️</span><span class="xn">Dias</span><span
+                                    class="xr">DEF</span></div>
+                            <div class="xp xp-def"><span class="xi">🛡️</span><span class="xn">Marquinhos</span><span
+                                    class="xr">DEF</span></div>
+                            <div class="xp xp-def"><span class="xi">🛡️</span><span class="xn">Hernández</span><span
+                                    class="xr">DEF</span></div>
+                            <div class="xp xp-def"><span class="xi">🛡️</span><span class="xn">Carvajal</span><span
+                                    class="xr">DEF</span></div>
+                        </div>
+                        <div class="xi-row-f">
+                            <div class="xp xp-mid"><span class="xi">⭐</span><span class="xn">De Bruyne</span><span
+                                    class="xr">MID</span></div>
+                            <div class="xp xp-mid"><span class="xi">⭐</span><span class="xn">Pedri</span><span
+                                    class="xr">MID</span></div>
+                            <div class="xp xp-mid"><span class="xi">⭐</span><span class="xn">Bellingham</span><span
+                                    class="xr">MID</span></div>
+                            <div class="xp xp-mid"><span class="xi">⭐</span><span class="xn">Kroos</span><span
+                                    class="xr">MID</span></div>
+                        </div>
+                        <div class="xi-row-f">
+                            <div class="xp xp-fwd"><span class="xi">⚽</span><span class="xn">Messi</span><span
+                                    class="xr">FWD</span></div>
+                            <div class="xp xp-fwd"><span class="xi">⚽</span><span class="xn">Mbappé</span><span
+                                    class="xr">FWD</span></div>
+                        </div>
+                    </div>
+                    <div class="xi-selection-note">Selected by ML scoring using goals, assists, pass accuracy, stamina
+                        and positional balance across 112 football records from 7 teams. Formation: 4-4-2.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-wrap" style="background:var(--bg2);">
+        <div class="container">
+            <div class="stats-band sr">
+                <div class="sb-item">
+                    <div class="sb-n"><span data-target="272">0</span></div>
+                    <div class="sb-l">Total Player Records</div>
+                </div>
+                <div class="sb-item">
+                    <div class="sb-n"><span data-target="160">0</span></div>
+                    <div class="sb-l">Cricket Players</div>
+                </div>
+                <div class="sb-item">
+                    <div class="sb-n"><span data-target="112">0</span></div>
+                    <div class="sb-l">Football Players</div>
+                </div>
+                <div class="sb-item">
+                    <div class="sb-n"><span data-target="17">0</span></div>
+                    <div class="sb-l">National Teams</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="rule section-wrap"></div>
+
+    <section id="tech" class="section-wrap sec-pad">
+        <div class="container">
+            <div class="eyebrow sr">Technology Stack</div>
+            <h2 class="sec-h2 sr d1">Built on a serious<br><em>modern stack.</em></h2>
+            <p class="sec-sub sr d2">Sports Intel AI combines React, Firebase, real-time AI, and interactive charting
+                into a
+                premium coaching intelligence experience.</p>
+            <div class="tech-grid">
+                <div class="tech-card sr d1">
+                    <div class="tc-icon">⚛️</div>
+                    <div class="tc-name">React + Vite</div>
+                    <p class="tc-desc">Lightning-fast React 19 frontend with Vite 7 HMR, React Router v7 for routing,
+                        Framer Motion animations, and TailwindCSS styling.</p>
+                    <div class="tc-tags"><span class="tc-tag">React 19</span><span class="tc-tag">Vite 7</span><span
+                            class="tc-tag">TailwindCSS 4</span><span class="tc-tag">Framer Motion</span></div>
+                </div>
+                <div class="tech-card sr d2">
+                    <div class="tc-icon">🔥</div>
+                    <div class="tc-name">Firebase Backend</div>
+                    <p class="tc-desc">Firebase Auth for email/Google sign-in, Firestore for user data &amp; role
+                        management, security rules for coach/admin access control.</p>
+                    <div class="tc-tags"><span class="tc-tag">Firebase Auth</span><span
+                            class="tc-tag">Firestore</span><span class="tc-tag">Security Rules</span><span
+                            class="tc-tag">Google Sign-In</span></div>
+                </div>
+                <div class="tech-card sr d3">
+                    <div class="tc-icon">🤖</div>
+                    <div class="tc-name">ML / AI Engine</div>
+                    <p class="tc-desc">FastAPI ML service with scikit-learn models for regression &amp; classification.
+                        Deep AI Engine provides neural analysis with match context inputs.</p>
+                    <div class="tc-tags"><span class="tc-tag">scikit-learn</span><span
+                            class="tc-tag">FastAPI</span><span class="tc-tag">joblib</span><span class="tc-tag">Deep AI
+                            v5</span></div>
+                </div>
+                <div class="tech-card sr d1">
+                    <div class="tc-icon">📈</div>
+                    <div class="tc-name">Interactive Charts</div>
+                    <p class="tc-desc">Chart.js and Recharts power trend lines, radar charts, bar comparisons and
+                        real-time animated performance visuals in the browser.</p>
+                    <div class="tc-tags"><span class="tc-tag">Chart.js 4</span><span class="tc-tag">Recharts</span><span
+                            class="tc-tag">react-chartjs-2</span><span class="tc-tag">Canvas</span></div>
+                </div>
+                <div class="tech-card sr d2">
+                    <div class="tc-icon">🗄️</div>
+                    <div class="tc-name">Real Data Sources</div>
+                    <p class="tc-desc">Cricket data from comprehensive JSON datasets. Football data extracted from
+                        SQLite database. 272 real international player records.</p>
+                    <div class="tc-tags"><span class="tc-tag">JSON Data</span><span class="tc-tag">SQLite</span><span
+                            class="tc-tag">272 Records</span><span class="tc-tag">Real Stats</span></div>
+                </div>
+                <div class="tech-card sr d3">
+                    <div class="tc-icon">🎨</div>
+                    <div class="tc-name">3D &amp; Animations</div>
+                    <p class="tc-desc">Three.js and React Three Fiber for 3D player highlights, GSAP for scroll
+                        animations, and Lucide React for premium iconography.</p>
+                    <div class="tc-tags"><span class="tc-tag">Three.js</span><span class="tc-tag">R3F</span><span
+                            class="tc-tag">GSAP</span><span class="tc-tag">Lucide Icons</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="rule section-wrap"></div>
+
+    <section id="roles" class="section-wrap sec-pad" style="background:var(--bg2);">
+        <div class="container">
+            <div class="eyebrow sr">Access Control</div>
+            <h2 class="sec-h2 sr d1">Two roles.<br><em>Purpose-built access.</em></h2>
+            <p class="sec-sub sr d2">Firebase-powered two-tier role model — Admins manage coaches &amp; monitor
+                activity, Coaches analyse players and build squads for their assigned team.</p>
+            <div class="roles-grid">
+                <div class="role-card admin sr d2">
+                    <div class="rc-icon">🛡️</div>
+                    <div class="rc-name">Admin</div>
+                    <p class="rc-desc">Full platform control. Manage coach accounts, monitor activity logs, inspect any
+                        team's data, and access all analytics &amp; predictions across both sports.</p>
+                    <ul class="rc-perms">
+                        <li><span class="pchk">◆</span> All player analysis &amp; Deep AI predictions</li>
+                        <li><span class="pchk">◆</span> Cricket &amp; Football Best XI generation</li>
+                        <li><span class="pchk">◆</span> Create &amp; manage Coach accounts</li>
+                        <li><span class="pchk">◆</span> Monitor coach activity &amp; login logs</li>
+                        <li><span class="pchk">◆</span> Inspect any team across all nations</li>
+                    </ul>
+                </div>
+                <div class="role-card coach sr d3">
+                    <div class="rc-icon">🎽</div>
+                    <div class="rc-name">Coach</div>
+                    <p class="rc-desc">Team-locked analysis access. Permanently assigned to one discipline and national
+                        team. Full analytics, predictions, comparison and Best XI for your squad.</p>
+                    <ul class="rc-perms">
+                        <li><span class="pchk">◆</span> Full player analysis for your team</li>
+                        <li><span class="pchk">◆</span> Deep AI neural match predictions</li>
+                        <li><span class="pchk">◆</span> Head-to-Head player comparisons</li>
+                        <li><span class="pchk">◆</span> Injury risk &amp; fatigue probabilities</li>
+                        <li><span class="pchk">◆</span> AI-generated Best Playing XI</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="rule section-wrap"></div>
+
+    <section id="cta" class="section-wrap">
+        <div class="cta-inner">
+            <div class="cta-eyebrow sr">Ready to Begin</div>
+            <h2 class="cta-h2 sr d1">Start analysing.<br><em>Start winning.</em></h2>
+            <p class="cta-p sr d2">Sign in to Sports Intel AI and unlock deep performance analytics across 272 cricket
+                &amp;
+                football player records — powered by machine learning and real international data.</p>
+            <div class="cta-btns sr d3">
+                <a href="/auth" class="btn-cta-main">⚡ Login to Sports Intel AI</a>
+            </div>
+            <div class="cta-creds sr d4">Sign in with <strong>Email/Password</strong> or <strong
+                    style="color:var(--cyan);">Google Account</strong></div>
+        </div>
+    </section>
+
+    <footer class="section-wrap">
+        <div class="footer-brand">Athlete<span class="iq">IQ</span></div>
+        <div class="footer-note">AI-Powered Sports Intelligence &nbsp;·&nbsp; React · Firebase · scikit-learn · Chart.js
+            · Vite</div>
+        <div class="footer-pills"><span class="footer-pill">🏏 Cricket</span><span class="footer-pill">⚽
+                Football</span><span class="footer-pill">🤖 Deep AI</span></div>
+    </footer>
+
+    <script>
+        (function () { const cvs = document.getElementById('canvas'), ctx = cvs.getContext('2d'); let W, H, pts = []; function resize() { W = cvs.width = window.innerWidth; H = cvs.height = window.innerHeight } resize(); window.addEventListener('resize', resize); for (let i = 0; i < 90; i++)pts.push({ x: Math.random() * 9999, y: Math.random() * 9999, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: Math.random() * 1.2 + .3, a: Math.random() * .5 + .15, c: Math.random() > .55 ? '#D4FF00' : Math.random() > .5 ? '#00D4FF' : '#ffffff' }); function drawGrid() { ctx.clearRect(0, 0, W, H); ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.018)'; ctx.lineWidth = 1; const g = 90; for (let x = 0; x < W; x += g) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke() } for (let y = 0; y < H; y += g) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke() } ctx.restore() } function frame() { drawGrid(); pts.forEach(p => { p.x = (p.x + p.vx + W * 10) % W; p.y = (p.y + p.vy + H * 10) % H; ctx.save(); ctx.globalAlpha = p.a; ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); ctx.restore() }); for (let i = 0; i < pts.length; i++)for (let j = i + 1; j < pts.length; j++) { const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y, d = Math.sqrt(dx * dx + dy * dy); if (d < 110) { ctx.save(); ctx.globalAlpha = (1 - d / 110) * .07; ctx.strokeStyle = '#D4FF00'; ctx.lineWidth = .5; ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke(); ctx.restore() } } requestAnimationFrame(frame) } frame() })();
+        const nav = document.getElementById('nav'); window.addEventListener('scroll', () => nav.classList.toggle('solid', window.scrollY > 20));
+        const tickerItems = ['272 Player Records', '🏏 Cricket Analytics', '⚽ Football Analytics', 'Deep AI Engine v5', 'Injury Risk Assessment', 'Neural Match Prediction', 'Best XI Generator', 'Head-to-Head Comparison', 'Capability Radar', '160 Cricket Players', '112 Football Players', '17 National Teams', 'React + Firebase', 'ML-Powered Insights', 'Real International Data'];
+        const track = document.getElementById('tickerTrack'); const html = tickerItems.map(t => `<div class="ticker-item">${t}<span class="tick-sep"> ✦ </span></div>`).join(''); track.innerHTML = html + html;
+        const srEls = document.querySelectorAll('.sr'); const revObserver = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('up') }) }, { threshold: .1 }); srEls.forEach(el => revObserver.observe(el));
+        function countUp(el, target, duration = 1800) { let start = null; const tick = ts => { if (!start) start = ts; const p = Math.min((ts - start) / duration, 1); const ease = 1 - Math.pow(1 - p, 3); el.textContent = Math.floor(ease * target); if (p < 1) requestAnimationFrame(tick); else el.textContent = target }; requestAnimationFrame(tick) }
+        const cntObserver = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { const t = parseInt(e.target.dataset.target); countUp(e.target, t); cntObserver.unobserve(e.target) } }) }, { threshold: .4 }); document.querySelectorAll('[data-target]').forEach(el => cntObserver.observe(el));
+        const scCard = document.getElementById('scorecard'); const scObserver = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { countUp(document.getElementById('scNum'), 94, 2200); scCard.querySelectorAll('.sc-bar-fill').forEach(bar => { setTimeout(() => { bar.style.width = bar.dataset.w + '%' }, 300) }); scObserver.unobserve(e.target) } }) }, { threshold: .3 }); if (scCard) scObserver.observe(scCard);
+        document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', e => { const target = document.querySelector(a.getAttribute('href')); if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }) } }) });
+        window.addEventListener('load', () => { document.querySelectorAll('.sr').forEach((el, i) => { if (el.getBoundingClientRect().top < window.innerHeight) setTimeout(() => el.classList.add('up'), i * 80) }) });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,518 @@
+/* ── Base ─────────────────────────────────────────────────────── */
+.auth-page-body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    color: #ffffff;
+    width: 100%;
+}
+
+/* ── Split Background ─────────────────────────────────────────── */
+.bg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    z-index: 1;
+}
+
+.bg-half {
+    flex: 1;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: filter 0.6s ease;
+}
+
+.bg-cricket {
+    background-image: url('/Kohli.webp');
+}
+
+.bg-football {
+    background-image: url('/Ronaldo.jpg');
+}
+
+/* Dim whichever half doesn't match current role tab */
+.auth-page-body.mode-admin .bg-cricket {
+    filter: brightness(1.25) blur(0.5px);
+}
+
+.auth-page-body.mode-admin .bg-football {
+    filter: brightness(1.25) blur(0.5px);
+}
+
+.auth-page-body.mode-coach .bg-cricket {
+    filter: brightness(1.25);
+}
+
+.auth-page-body.mode-coach .bg-football {
+    filter: brightness(1.25);
+}
+
+.bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            rgba(11, 15, 25, 0.25) 0%,
+            rgba(11, 15, 25, 0.92) 38%,
+            rgba(11, 15, 25, 0.92) 62%,
+            rgba(11, 15, 25, 0.25) 100%);
+    z-index: 2;
+}
+
+/* ── Login Wrapper ────────────────────────────────────────────── */
+.login-wrapper {
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+    z-index: 10;
+}
+
+/* ── Role Switcher Tabs ───────────────────────────────────────── */
+.role-switcher {
+    display: flex;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 6px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(8px);
+}
+
+.role-tab {
+    flex: 1;
+    padding: 12px 10px;
+    border: none;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.role-tab:hover:not(.active) {
+    color: #d1d5db;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* Coach tab active */
+.role-tab.active.coach {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Admin tab active */
+.role-tab.active.admin {
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.45);
+}
+
+.role-tab-icon {
+    font-size: 16px;
+}
+
+/* ── Login Card ───────────────────────────────────────────────── */
+.login-card {
+    background: rgba(17, 25, 40, 0.70);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    border-left: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 24px;
+    padding: 38px 40px 36px;
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+    transition: border-color 0.5s ease, box-shadow 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Accent top bar that changes per role */
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    transition: background 0.5s ease;
+}
+
+.login-card.card-coach::before {
+    background: linear-gradient(90deg, #2563eb, #3b82f6, #06b6d4);
+}
+
+.login-card.card-admin::before {
+    background: linear-gradient(90deg, #7c3aed, #a855f7, #ec4899);
+}
+
+.login-card.card-coach {
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(59, 130, 246, 0.1);
+}
+
+.login-card.card-admin {
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(168, 85, 247, 0.15);
+}
+
+/* ── Role Badge ───────────────────────────────────────────────── */
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+}
+
+.role-badge.badge-coach {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    color: #60a5fa;
+}
+
+.role-badge.badge-admin {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    color: #c084fc;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+.login-header {
+    margin-bottom: 28px;
+}
+
+.login-header h2 {
+    font-size: 27px;
+    font-weight: 800;
+    margin-bottom: 7px;
+    background: linear-gradient(to right, #fff, #9ca3af);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.01em;
+}
+
+.login-header p {
+    font-size: 14px;
+    color: #9ca3af;
+    line-height: 1.5;
+}
+
+/* ── Form ─────────────────────────────────────────────────────── */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    color: #d1d5db;
+    text-transform: uppercase;
+}
+
+.form-control {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: var(--focus-color, #3b82f6);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 4px var(--focus-glow, rgba(59, 130, 246, 0.15));
+}
+
+.card-coach .form-control:focus {
+    --focus-color: #3b82f6;
+    --focus-glow: rgba(59, 130, 246, 0.15);
+}
+
+.card-admin .form-control:focus {
+    --focus-color: #a855f7;
+    --focus-glow: rgba(168, 85, 247, 0.15);
+}
+
+/* ── Submit Button ────────────────────────────────────────────── */
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.btn-coach {
+    background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+    color: #fff;
+}
+
+.btn-coach:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45);
+}
+
+.btn-admin-submit {
+    background: linear-gradient(135deg, #6d28d9 0%, #a855f7 100%);
+    color: #fff;
+}
+
+.btn-admin-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(126, 34, 206, 0.45);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Divider ──────────────────────────────────────────────────── */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 22px 0;
+    color: #4b5563;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.divider span {
+    padding: 0 14px;
+}
+
+/* ── Google Button ────────────────────────────────────────────── */
+.btn-google {
+    width: 100%;
+    padding: 13px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.25s ease;
+}
+
+.btn-google:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
+}
+
+/* ── Footer ───────────────────────────────────────────────────── */
+.login-footer {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.login-footer button {
+    background: none;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    transition: color 0.2s;
+}
+
+.login-footer button:hover {
+    text-decoration: underline;
+}
+
+.coach-footer-link {
+    color: #3b82f6;
+}
+
+.admin-footer-link {
+    color: #a855f7;
+}
+
+/* ── Error ────────────────────────────────────────────────────── */
+.auth-error-message {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #f87171;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* ── Admin hint ───────────────────────────────────────────────── */
+.admin-hint {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: rgba(168, 85, 247, 0.07);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 10px;
+    font-size: 12px;
+    color: #a78bfa;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.admin-hint strong {
+    color: #c084fc;
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .bg-container {
+        flex-direction: column;
+    }
+
+    .bg-overlay {
+        background: linear-gradient(180deg,
+                rgba(11, 15, 25, 0.4) 0%,
+                rgba(11, 15, 25, 0.9) 40%,
+                rgba(11, 15, 25, 0.9) 60%,
+                rgba(11, 15, 25, 0.4) 100%);
+    }
+
+    .login-card {
+        padding: 30px 24px;
+    }
+}
+/* ── Light Mode Overrides ─────────────────────────────────────── */
+.light-mode .auth-page-body {
+    color: #0f172a;
+}
+
+.light-mode .bg-overlay {
+    background: linear-gradient(
+        90deg,
+        rgba(241, 245, 249, 0.2) 0%,
+        rgba(241, 245, 249, 0.88) 38%,
+        rgba(241, 245, 249, 0.88) 62%,
+        rgba(241, 245, 249, 0.2) 100%
+    );
+}
+
+.light-mode .login-card {
+    background: rgba(255, 255, 255, 0.82);
+    border-color: rgba(0, 0, 0, 0.12);
+    border-top-color: rgba(0, 0, 0, 0.2);
+    border-left-color: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
+}
+
+.light-mode .login-header h2 {
+    background: linear-gradient(to right, #0f172a, #475569);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.light-mode .login-header p { color: #64748b; }
+
+.light-mode .role-switcher {
+    background: rgba(0,0,0,0.06);
+    border-color: rgba(0,0,0,0.1);
+}
+
+.light-mode .role-tab { color: #94a3b8; }
+.light-mode .role-tab:hover:not(.active) { color: #475569; background: rgba(0,0,0,0.04); }
+
+.light-mode .role-badge.badge-coach {
+    background: rgba(37,99,235,0.1);
+    border-color: rgba(37,99,235,0.3);
+    color: #2563eb;
+}
+.light-mode .role-badge.badge-admin {
+    background: rgba(124,58,237,0.1);
+    border-color: rgba(124,58,237,0.3);
+    color: #7c3aed;
+}
+
+.light-mode .form-group label { color: #374151; }
+.light-mode .form-control {
+    background: rgba(0,0,0,0.04);
+    border-color: rgba(0,0,0,0.12);
+    color: #0f172a;
+}
+.light-mode .form-control::placeholder { color: #94a3b8; }
+.light-mode .form-control:focus { background: rgba(0,0,0,0.06); }
+
+.light-mode .divider { color: #94a3b8; }
+.light-mode .divider::before,
+.light-mode .divider::after { border-color: rgba(0,0,0,0.08); }
+
+.light-mode .btn-google {
+    background: rgba(0,0,0,0.03);
+    color: #374151;
+    border-color: rgba(0,0,0,0.1);
+}
+.light-mode .btn-google:hover { background: rgba(0,0,0,0.07); border-color: rgba(0,0,0,0.18); }
+
+.light-mode .login-footer { color: #64748b; }
+.light-mode .admin-hint {
+    background: rgba(124,58,237,0.06);
+    border-color: rgba(124,58,237,0.18);
+    color: #7c3aed;
+}
+.light-mode .admin-hint strong { color: #6d28d9; }

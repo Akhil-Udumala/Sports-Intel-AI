@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-background: #0f172a;
+  --color-foreground: #f8fafc;
+  --color-primary: #0ea5e9;
+  --color-secondary: #6366f1;
+}
+
+:root {
+  --primary: #0ea5e9;
+  --primary-dark: #0284c7;
+  --secondary: #6366f1;
+  --accent: #f59e0b;
+  --background: #0f172a;
+  --surface: #1e293b;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --warning: #f59e0b;
+
+  --bg1: #071029;
+  --bg2: #0b1220;
+  --card-from: #0f2b3f;
+  --card-to: #0b2130;
+  --muted: #9aa4b2;
+
+  /* Player Analysis Design Tokens */
+  --p: #0ea5e9;
+  --a: #f59e0b;
+  --s: #6366f1;
+  --surf: #1e293b;
+  --surf2: rgba(255, 255, 255, 0.05);
+  --bdr: rgba(255, 255, 255, 0.1);
+  --txt: #f8fafc;
+  --green: #22c55e;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+}
+
+#root {
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Base Glassmorphism utility */
+.glass {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+/* Sidebar scrollbar */
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}

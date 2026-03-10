@@ -1,0 +1,55 @@
+# ========================
+# Dependencies
+# ========================
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# ========================
+# Build Output
+# ========================
+dist/
+build/
+
+# ========================
+# Environment & Secrets (NEVER push these)
+# ========================
+.env
+.env.local
+.env.*.local
+
+# ========================
+# Logs
+# ========================
+*.log
+ml_service.log
+firebase-debug.log
+
+# ========================
+# OS & Editor Files
+# ========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ========================
+# Large Data Files
+# ========================
+database.sqlite
+all_json/
+*.sqlite
+
+# ========================
+# ML Models (large binary files)
+# ========================
+ml-service/models/*.joblib
+
+# ========================
+# Firebase
+# ========================
+.firebase/
