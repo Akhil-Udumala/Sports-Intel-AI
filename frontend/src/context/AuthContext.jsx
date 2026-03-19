@@ -74,11 +74,17 @@ export const AuthProvider = ({ children }) => {
         try {
             const q = query(
                 collection(db, 'notifications'),
-                where('userId', '==', user.uid),
-                orderBy('createdAt', 'desc')
+                where('userId', '==', user.uid)
             );
             unsub = onSnapshot(q, snap => {
-                setNotifications(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+                const results = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                // Client-side sort by createdAt descending
+                results.sort((a, b) => {
+                    const timeA = a.createdAt?.seconds || new Date(a.createdAt).getTime() || 0;
+                    const timeB = b.createdAt?.seconds || new Date(b.createdAt).getTime() || 0;
+                    return timeB - timeA;
+                });
+                setNotifications(results);
             }, () => { });
         } catch { /* ignore */ }
         return () => unsub && unsub();

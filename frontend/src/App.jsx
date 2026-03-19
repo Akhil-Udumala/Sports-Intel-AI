@@ -12,6 +12,7 @@ import SelectionRecommendation from './components/SelectionRecommendation';
 import PlayerAnalysis from './components/PlayerAnalysis';
 import AdminDashboard from './components/AdminDashboard';
 import LandingPage from './components/LandingPage';
+import GlobalWarningModal from './components/GlobalWarningModal';
 import { cricketTeams } from './data/cricketData';
 import { internationalFootballTeams as footballTeams } from './data/internationalFootballData';
 import { generatePrediction } from './utils/prediction';
@@ -26,45 +27,6 @@ import {
     SidebarSeparator,
 } from './components/ui/Sidebar';
 
-/* ─── Notification Bell ─────────────────────────────────────── */
-const NotificationBell = () => {
-    const { notifications } = useAuth();
-    const [open, setOpen] = useState(false);
-    const unread = (notifications || []).filter(n => !n.read);
-
-    if (!notifications?.length) return null;
-
-    return (
-        <div className="relative">
-            <button
-                onClick={() => setOpen(o => !o)}
-                className="relative p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all"
-            >
-                <span className="text-lg">🔔</span>
-                {unread.length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center animate-pulse">
-                        {unread.length}
-                    </span>
-                )}
-            </button>
-            {open && (
-                <div className="absolute right-0 top-12 w-80 bg-[#0f172a] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
-                    <div className="p-4 border-b border-white/5 text-xs font-black text-slate-400 uppercase tracking-widest">
-                        Notifications
-                    </div>
-                    <div className="max-h-72 overflow-y-auto divide-y divide-white/5">
-                        {notifications.map(n => (
-                            <div key={n.id} className={`p-4 ${!n.read ? 'bg-indigo-500/5' : ''}`}>
-                                <p className="text-sm font-bold text-white">{n.title || n.type}</p>
-                                <p className="text-xs text-slate-400 mt-1">{n.message}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
 
 /* ─── DashboardWrapper ──────────────────────────────────────────── */
 const DashboardWrapper = () => {
@@ -171,7 +133,6 @@ const DashboardWrapper = () => {
                         </div>
 
                         <div className="flex items-center space-x-3">
-                            <NotificationBell />
                             <button
                                 onClick={handleShowRecommendation}
                                 className="hidden md:block px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-lg text-xs font-bold text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all"
@@ -495,6 +456,7 @@ const TeamSelectionWrapper = ({ adminMode = false }) => {
 function App() {
     return (
         <AuthProvider>
+            <GlobalWarningModal />
             <BrowserRouter>
                 <AppRoutes />
             </BrowserRouter>

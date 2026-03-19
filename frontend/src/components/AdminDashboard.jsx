@@ -154,6 +154,8 @@ const AdminDashboard = () => {
     const [toastMsg, setToastMsg] = useState('');
     const [loading, setLoading] = useState(true);
     const [selectedActivityCoach, setSelectedActivityCoach] = useState(null);
+    const [clearingRequests, setClearingRequests] = useState(false);
+    const [showClearConfirm, setShowClearConfirm] = useState(false);
 
     // Gate: only admins can access
     useEffect(() => {
@@ -249,6 +251,21 @@ const AdminDashboard = () => {
         .filter(c => c.status === 'active')
         .reduce((acc, c) => { acc[c.teamId] = (acc[c.teamId] || 0) + 1; return acc; }, {});
     const unreadNotifs = adminNotifs.filter(n => !n.read).length;
+
+    const clearAllRequests = async () => {
+        setClearingRequests(true);
+        try {
+            const snap = await getDocs(collection(db, 'coach_requests'));
+            await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+            setToastMsg('All requests cleared successfully.');
+            setShowClearConfirm(false);
+            setTimeout(() => setToastMsg(''), 3000);
+        } catch (e) {
+            setToastMsg('Error clearing requests: ' + e.message);
+        } finally {
+            setClearingRequests(false);
+        }
+    };
 
     // --- Analytics Logic ---
     const now = new Date();
@@ -765,8 +782,18 @@ const AdminDashboard = () => {
                                 {activeTab === 'requests' && (
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between mb-2">
-                                            <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest">Coach Role Requests</h2>
-                                            <Badge color={pendingCount > 0 ? 'yellow' : 'green'}>{pendingCount} pending</Badge>
+                                            <div className="flex items-center gap-4">
+                                                <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest">Coach Role Requests</h2>
+                                                <Badge color={pendingCount > 0 ? 'yellow' : 'green'}>{pendingCount} pending</Badge>
+                                            </div>
+                                            {requests.length > 0 && (
+                                                <button
+                                                    onClick={() => setShowClearConfirm(true)}
+                                                    className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-500 font-bold text-[10px] rounded-lg transition-all uppercase tracking-widest flex items-center gap-2"
+                                                >
+                                                    🗑 Clear All
+                                                </button>
+                                            )}
                                         </div>
                                         {requests.length === 0 ? (
                                             <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-12 text-center text-slate-600 italic">
@@ -1011,6 +1038,43 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             </SidebarInset>
+
+            {/* Clear All Confirmation Modal */}
+            <AnimatePresence>
+                {showClearConfirm && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md px-4">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="bg-[#0f172a] border border-red-500/30 rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center"
+                        >
+                            <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-500/20">
+                                <span className="text-3xl">⚠️</span>
+                            </div>
+                            <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-2">Clear All Requests?</h3>
+                            <p className="text-slate-400 text-sm mb-8">
+                                This will permanently delete all <span className="text-white font-bold">{requests.length}</span> coach requests. This action cannot be undone.
+                            </p>
+                            <div className="flex flex-col gap-3">
+                                <button
+                                    onClick={clearAllRequests}
+                                    disabled={clearingRequests}
+                                    className="w-full py-4 bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest rounded-xl transition-all disabled:opacity-50"
+                                >
+                                    {clearingRequests ? 'Clearing...' : 'Yes, Delete All'}
+                                </button>
+                                <button
+                                    onClick={() => setShowClearConfirm(false)}
+                                    className="w-full py-4 bg-white/5 hover:bg-white/10 text-slate-400 font-black uppercase tracking-widest rounded-xl transition-all"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </SidebarProvider>
     );
 };

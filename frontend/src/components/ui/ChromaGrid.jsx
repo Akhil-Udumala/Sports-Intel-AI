@@ -107,7 +107,6 @@ export const ChromaGrid = ({
                     <footer className="chroma-info relative">
                         <div className="flex flex-col">
                             <h3 className="name text-sm font-bold truncate text-white">{c.title}</h3>
-                            {c.handle && <span className="handle text-[10px] opacity-60 truncate text-slate-400">{c.handle}</span>}
                             <p className="role text-[10px] opacity-60 truncate text-slate-500">{c.subtitle}</p>
                         </div>
                     </footer>

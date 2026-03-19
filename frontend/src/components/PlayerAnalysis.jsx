@@ -152,7 +152,7 @@ const PlayerAnalysis = () => {
             ];
         }
 
-        return {
+        const result = {
             overall_score: impact,
             total_runs: player.runsScored || player.goals || 0,
             batting_average: sport === 'football' ? calculatedRating : (player.battingAvg || 0),
@@ -198,6 +198,16 @@ const PlayerAnalysis = () => {
             ml_wickets_pred: aiActivated && aiData ? (aiData.predictedWickets || (['Batter', 'Wicketkeeper'].includes(player.role) ? 0 : 2)) : 0,
             ml_eco_pred: aiActivated && aiData ? (aiData.predictedEco || (player.economy || 5.5)) : 0,
         };
+
+        const round2 = (num) => typeof num === 'number' ? Math.round(num * 100) / 100 : num;
+        for (const key in result) {
+            if (Array.isArray(result[key])) {
+                result[key] = result[key].map(round2);
+            } else {
+                result[key] = round2(result[key]);
+            }
+        }
+        return result;
     }, [player, sport, aiData]);
 
     if (!player || !analysis) {

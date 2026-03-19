@@ -193,13 +193,24 @@ const PlayerComparison = () => {
         { subject: 'Overall', A: p1.rating || 75, B: p2.rating || 75, fullMark: 100 },
     ];
 
-    const StatRow = ({ label, v1, v2, highlight = false }) => (
-        <div className={`flex justify-between items-center py-4 border-b border-white/5 last:border-0 hover:bg-white/[0.02] px-4 transition-colors ${highlight ? 'bg-indigo-500/5 border-l-4 border-indigo-500' : ''}`}>
-            <span className={`text-2xl font-black w-24 ${highlight ? 'text-white' : 'text-indigo-400'}`}>{v1}</span>
-            <span className="text-[11px] text-slate-500 uppercase tracking-widest font-black text-center flex-1">{label}</span>
-            <span className={`text-2xl font-black w-24 text-right ${highlight ? 'text-white' : 'text-blue-400'}`}>{v2}</span>
-        </div>
-    );
+    const StatRow = ({ label, v1, v2, highlight = false }) => {
+        const formatValue = (v) => {
+            if (typeof v === 'number') return Math.round(v * 100) / 100;
+            // Handle strings that might be "19.9999994%" or similar edge cases theoretically
+            const numMatch = typeof v === 'string' && v.match(/^([-+]?[0-9]*\.?[0-9]+)(%?)$/);
+            if (numMatch && numMatch[1].includes('.') && numMatch[1].split('.')[1].length > 2) {
+                return (Math.round(parseFloat(numMatch[1]) * 100) / 100) + numMatch[2];
+            }
+            return v;
+        };
+        return (
+            <div className={`flex justify-between items-center py-4 border-b border-white/5 last:border-0 hover:bg-white/[0.02] px-4 transition-colors ${highlight ? 'bg-indigo-500/5 border-l-4 border-indigo-500' : ''}`}>
+                <span className={`text-2xl font-black w-24 ${highlight ? 'text-white' : 'text-indigo-400'}`}>{formatValue(v1)}</span>
+                <span className="text-[11px] text-slate-500 uppercase tracking-widest font-black text-center flex-1">{label}</span>
+                <span className={`text-2xl font-black w-24 text-right ${highlight ? 'text-white' : 'text-blue-400'}`}>{formatValue(v2)}</span>
+            </div>
+        );
+    };
 
     return (
         <div className="min-h-screen bg-[#060010] text-white p-4 md:p-8">
