@@ -98,6 +98,8 @@ npm run dev
 
 ---
 
-## 📄 License & Attribution
+## Author
 
-Developed by **Akhil Udumala**. Licensed under the [MIT License](LICENSE).
+**Akhil Udumala**
+
+GitHub: [Akhil-Udumala](https://github.com/Akhil-Udumala)
